@@ -5,15 +5,12 @@ const JIOSAAVN_API = "https://www.jiosaavn.com/api.php";
 /**
  * JioSaavn Internal API Proxy
  * Calls JioSaavn's official internal API directly
- * Maps our clean API paths to JioSaavn's internal __call parameters
  */
 export async function GET(request) {
   const { searchParams, pathname } = new URL(request.url);
   
-  // Extract the API path after /api/jiosaavn/
   const apiPath = pathname.replace("/api/jiosaavn/", "");
   
-  // Map our API paths to JioSaavn internal API calls
   let jioCall = "";
   let jioParams = {};
 
@@ -73,7 +70,6 @@ export async function GET(request) {
     return NextResponse.json({ success: false, error: "Unknown API path" }, { status: 404 });
   }
 
-  // Build the JioSaavn API URL
   const targetUrl = new URL(JIOSAAVN_API);
   targetUrl.searchParams.append("__call", jioCall);
   targetUrl.searchParams.append("_format", "json");
@@ -88,7 +84,7 @@ export async function GET(request) {
     const response = await fetch(targetUrl.toString(), {
       method: "GET",
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "Accept": "application/json, text/plain, */*",
         "Accept-Language": "en-US,en;q=0.9",
         "Origin": "https://www.jiosaavn.com",
@@ -121,12 +117,7 @@ export async function GET(request) {
   }
 }
 
-/**
- * Transform JioSaavn API response to match saavn.dev format
- * This ensures our client code works without changes
- */
 function transformResponse(data, apiPath) {
-  // Search results (songs, albums, artists)
   if (data.results && Array.isArray(data.results)) {
     return {
       success: true,
@@ -137,7 +128,6 @@ function transformResponse(data, apiPath) {
     };
   }
 
-  // Autocomplete search
   if (data.songs || data.albums || data.artists || data.topquery) {
     const result = { success: true, data: {} };
 
@@ -160,13 +150,11 @@ function transformResponse(data, apiPath) {
     return result;
   }
 
-  // Song details
   if (apiPath.startsWith("songs/")) {
     const song = Array.isArray(data) ? data[0] : data;
     return { success: true, data: transformItem(song) };
   }
 
-  // Album details
   if (apiPath.startsWith("albums/") && data.list) {
     return {
       success: true,
@@ -177,7 +165,6 @@ function transformResponse(data, apiPath) {
     };
   }
 
-  // Artist details
   if (apiPath.startsWith("artists/")) {
     if (data.topSongs) {
       return {
@@ -194,22 +181,15 @@ function transformResponse(data, apiPath) {
     return { success: true, data: transformItem(data) };
   }
 
-  // Default
   return { success: true, data };
 }
 
-/**
- * Transform individual item (song, album, artist)
- * Normalizes JioSaavn internal format to saavn.dev format
- */
 function transformItem(item) {
   if (!item) return item;
 
   const transformed = { ...item };
 
-  // Normalize image URLs
   if (item.image && typeof item.image === "string") {
-    const baseUrl = item.image.replace("500x500", "").replace("150x150", "").replace("50x50", "");
     transformed.image = [
       { quality: "50x50", url: item.image.replace("500x500", "50x50").replace("150x150", "50x50") },
       { quality: "150x150", url: item.image.replace("500x500", "150x150").replace("50x50", "150x150") },
@@ -217,7 +197,6 @@ function transformItem(item) {
     ];
   }
 
-  // Add encrypted media URL as download URL
   if (item.encrypted_media_url) {
     transformed.downloadUrl = [
       { quality: "12kbps", url: item.encrypted_media_url },
@@ -228,7 +207,6 @@ function transformItem(item) {
     ];
   }
 
-  // Normalize artists from artistMap
   if (item.more_info?.artistMap) {
     transformed.artists = {
       primary: Object.entries(item.more_info.artistMap).map(([id, name]) => ({
@@ -238,12 +216,10 @@ function transformItem(item) {
     };
   }
 
-  // Normalize duration
   if (item.more_info?.duration) {
     transformed.duration = parseInt(item.more_info.duration);
   }
 
-  // Normalize language
   if (item.more_info?.language) {
     transformed.language = item.more_info.language;
   }
