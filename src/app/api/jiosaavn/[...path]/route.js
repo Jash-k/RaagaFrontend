@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const JIOSAAVN_API = "https://www.jiosaavn.com/api.php";
+const JIOSAAVN_API = "https://jiosaavn.com/api.php";
 
 /**
  * JioSaavn Internal API Proxy
