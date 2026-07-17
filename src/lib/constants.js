@@ -1,5 +1,6 @@
 // API Base URLs
-export const JIOSAAVN_API = process.env.NEXT_PUBLIC_JIOSAAVN_URL || "https://saavn.dev/api";
+// Use local proxy to avoid CORS issues (routes through Next.js API routes)
+export const JIOSAAVN_API = process.env.NEXT_PUBLIC_JIOSAAVN_URL || "/api/jiosaavn";
 export const GAANAPY_URL = process.env.NEXT_PUBLIC_GAANAPY_URL || "";
 export const YTMUSIC_URL = process.env.NEXT_PUBLIC_YTMUSIC_URL || "";
 
