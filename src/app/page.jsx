@@ -3,7 +3,7 @@ export default async function Home() {
   try {
     const res = await fetch('https://raagabackend.onrender.com/3sources/trending?lang=Tamil', { cache: 'no-store' });
     const data = await res.json();
-    sections = data.results || data.tracks || data;
+    sections = data?.data?.songs || data?.songs || data?.results || data?.tracks || [];
   } catch (e) {
     sections = [];
   }
