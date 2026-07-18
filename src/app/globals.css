@@ -1,16 +1,16 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --font-sans: 'Inter', 'Noto Sans Tamil', sans-serif;
-  --font-tamil: 'Noto Sans Tamil', sans-serif;
-  --color-ink: #050a05;
-  --color-void: #0a0f0a;
-  --color-card: #0f1a0f;
-  --color-neon: #39ff14;
-  --color-neon-glow: rgba(57,255,20,0.25);
+@layer base {
+  body {
+    @apply bg-ink text-white;
+    font-family: 'Inter', 'Noto Sans Tamil', sans-serif;
+  }
+  ::selection {
+    background: #39ff14;
+    color: #050a05;
+  }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-thumb { background: #39ff14; border-radius: 4px; }
 }
-
-body { background: #050a05; color: #eaffea; font-family: 'Inter','Noto Sans Tamil',sans-serif; }
-::selection { background: #39ff14; color: #050a05; }
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-thumb { background: #39ff14; border-radius: 4px; }
