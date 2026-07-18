@@ -29,7 +29,7 @@ export default async function Home() {
                 <img src={item.image || item.albumArt || item.thumbnail} alt={item.title || item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100" />
               </div>
               <h4 className="font-semibold truncate">{item.title || item.name || 'Unknown Song'}</h4>
-              <p className="text-xs text-neutral-400 truncate">{item.artist || item.artists || 'Unknown Artist'}</p>
+              <p className="text-xs text-neutral-400 truncate">{Array.isArray(item.artist) ? item.artist.map(a => a.name || a).join(', ') : (item.artist?.name || item.artist || item.artists || 'Unknown Artist')}</p>
             </a>
           ))}
           {Array.from({length: 6 - Math.min(sections?.length || 0, 6)}).map((_, i) => (
